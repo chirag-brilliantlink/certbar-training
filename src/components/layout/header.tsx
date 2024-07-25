@@ -4,7 +4,7 @@ import GradientButton from "../common/gradientButton";
 
 const Header = () => {
   return (
-    <div className="bg-[#1b1b1b] text-white border-b-[1px] border-[#054ADA] ">
+    <div className="bg-[black] text-white border-b-[1px] border-[#054ADA] ">
       <div className="px-[100px] py-[30px] flex flex-row justify-between">
         <div className="flex flex-row items-center gap-10 p-0">
           <img

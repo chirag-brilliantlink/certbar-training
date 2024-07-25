@@ -50,7 +50,7 @@ const Training = () => {
   };
 
   return (
-    <div className="bg-[#1b1b1b] text-white">
+    <div className="bg-[black] text-white">
       <div className="px-[100px] pb-[90px]">
         <div className="flex items-center justify-between">
           <h1 className="text-[50px] font-light">

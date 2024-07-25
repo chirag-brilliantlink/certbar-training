@@ -25,7 +25,7 @@ const Data = [
 
 const Standout = () => {
   return (
-    <div className="bg-[#1b1b1b] text-white">
+    <div className="bg-[black] text-white">
       <div className="px-[100px] py-[90px] flex flex-col items-center gap-6">
         <h1 className="text-[50px] font-light w-[60%] text-center">
           Stand out from the crowd and{" "}

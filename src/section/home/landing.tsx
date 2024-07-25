@@ -4,7 +4,7 @@ import React from "react";
 
 const Landing = () => {
   return (
-    <div className="bg-[#1b1b1b] text-white ">
+    <div className="bg-[black] text-white ">
       <div className="px-[100px] py-[90px]">
         <div className="flex flex-row">
           <div className="w-[60%]">

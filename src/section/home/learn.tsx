@@ -34,7 +34,7 @@ const Learn = () => {
   };
 
   return (
-    <div className="bg-[#1b1b1b] text-white">
+    <div className="bg-[black] text-white">
       <div className="px-[100px] py-[90px]">
         <h1 className="text-center text-[50px] font-extralight">
           Master the skills through <br />
