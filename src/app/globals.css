@@ -20,7 +20,7 @@
   /* padding: 50px 0px; */
   width: 100%;
   text-align: center;
-  background-color: #1b1b1b;
+  background-color: black;
 }
 
 @keyframes scrollLeft {
@@ -62,4 +62,24 @@
   color: #ff7510;
   font-size: var(--font-size);
   font-weight: 500;
+}
+
+.shadow-glow::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  margin: -10px;
+  border-radius: 35px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 174, 239, 0.6),
+    rgba(5, 74, 218, 0.4),
+    rgba(2, 37, 112, 0.2)
+  );
+  filter: blur(30px);
+  opacity: 0.75;
 }
