@@ -63,8 +63,12 @@ const Training = () => {
           {Data.map((item) => (
             <div
               key={item.id}
-              className={`relative p-[30px] bg-gray-900 rounded-lg transition-all duration-700 ease-in-out cursor-pointer overflow-hidden h-[220px] ${
+              className={`relative p-[30px] rounded-lg transition-all duration-700 ease-in-out cursor-pointer overflow-hidden h-[220px] ${
                 activeCard === item.id ? "bg-opacity-100" : "bg-opacity-80"
+              } ${
+                activeCard === item.id
+                  ? "bg-black-900 border-[1px] border-white"
+                  : "border-[1px] border-[#054ADA]"
               }`}
               onClick={() => handleCardClick(item.id)}
             >
