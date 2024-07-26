@@ -14,16 +14,10 @@ const Header = () => {
           />
           <ul className="flex items-center gap-7">
             <li className="flex flex-row items-center gap-1 hover:text-gray-400 cursor-pointer">
-              Catalogs <IoIosArrowDown size={10} />
-            </li>
-            <li className="flex flex-row items-center gap-1 hover:text-gray-400 cursor-pointer">
               For Individuals <IoIosArrowDown size={10} />
             </li>
             <li className="flex flex-row items-center gap-1 hover:text-gray-400 cursor-pointer">
               For Business <IoIosArrowDown size={10} />
-            </li>
-            <li className="flex flex-row items-center gap-1 hover:text-gray-400 cursor-pointer">
-              Pricing <IoIosArrowDown size={10} />
             </li>
           </ul>
         </div>

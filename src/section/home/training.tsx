@@ -1,6 +1,4 @@
-"use client";
-import React, { useState } from "react";
-import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
+import React from "react";
 import GradientButton from "@/components/common/gradientButton";
 
 const Data = [
@@ -43,12 +41,6 @@ const Data = [
 ];
 
 const Training = () => {
-  const [activeCard, setActiveCard] = useState<number | null>(null);
-
-  const handleCardClick = (id: number) => {
-    setActiveCard(activeCard === id ? null : id);
-  };
-
   return (
     <div className="bg-[black] text-white">
       <div className="px-[100px] pb-[90px]">
@@ -63,40 +55,15 @@ const Training = () => {
           {Data.map((item) => (
             <div
               key={item.id}
-              className={`relative p-[30px] rounded-lg transition-all duration-700 ease-in-out cursor-pointer overflow-hidden h-[220px] ${
-                activeCard === item.id ? "bg-opacity-100" : "bg-opacity-80"
-              } ${
-                activeCard === item.id
-                  ? "bg-black-900 border-[1px] border-white"
-                  : "border-[1px] border-[#054ADA]"
-              }`}
-              onClick={() => handleCardClick(item.id)}
+              className={`relative p-[30px] rounded-lg overflow-hidden h-[220px]`}
             >
-              <h2
-                className={`absolute text-2xl font-semibold transition-all duration-700 ${
-                  activeCard === item.id
-                    ? "top-6 left-6 text-left text-2xl"
-                    : "top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-full"
-                }`}
-              >
-                {item.title}
-              </h2>
-              <div
-                className={`absolute inset-0 p-6 transition-all duration-700 ease-in-out ${
-                  activeCard === item.id
-                    ? "opacity-100 top-16"
-                    : "opacity-0 pointer-events-none top-full"
-                }`}
-              >
-                <p className="mt-4">{item.description}</p>
+              <div className="flex items-center">
+                <div className="w-4 h-4 mr-4 rounded-full bg-gradient-to-r from-[#00AEEF] via-[#054ADA] to-[#022570]"></div>
+                <h2 className="text-2xl font-semibold">{item.title}</h2>
               </div>
-              <MdOutlineKeyboardDoubleArrowRight
-                className={`absolute transition-all duration-700 ease-in-out ${
-                  activeCard === item.id
-                    ? "top-4 right-4 text-2xl rotate-90"
-                    : "bottom-4 right-4 text-2xl"
-                }`}
-              />
+              <div className="mt-5">
+                <p className="pl-9">{item.description}</p>
+              </div>
             </div>
           ))}
         </div>

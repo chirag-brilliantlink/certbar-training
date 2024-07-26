@@ -17,7 +17,6 @@
 }
 
 .main-wrapper {
-  /* padding: 50px 0px; */
   width: 100%;
   text-align: center;
   background-color: black;
@@ -48,8 +47,6 @@
 .card {
   border-color: #ffc009;
   border-radius: 25px;
-  /* padding: 20px; */
-  /* width: 250px; */
   text-align: center;
   align-self: center;
   position: absolute;
