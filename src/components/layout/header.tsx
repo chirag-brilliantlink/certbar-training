@@ -1,190 +1,199 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-import { FaUsers, FaChartLine, FaDollarSign, FaCogs } from "react-icons/fa";
 import GradientButton from "../common/gradientButton";
+import Link from "next/link";
 
-const Header = () => {
-  const [isBusinessDropdownOpen, setIsBusinessDropdownOpen] = useState(false);
-  const [isPricingDropdownOpen, setIsPricingDropdownOpen] = useState(false);
-  const [openNestedDropdown, setOpenNestedDropdown] = useState(null);
+type SubItem = {
+  label: string;
+  path: string;
+};
 
-  const businessOptions = [
-    {
-      logo: <FaUsers />,
-      title: "Business Solution 1",
-      description: "Optimize your business with solution.",
-      nestedOptions: [
-        {
-          title: "Sub Solution 1-1",
-          description: "Detail of Sub Solution 1-1.",
-        },
-        {
-          title: "Sub Solution 1-2",
-          description: "Detail of Sub Solution 1-2.",
-        },
-      ],
-    },
-    {
-      logo: <FaChartLine />,
-      title: "Business Solution 2",
-      description: "Optimize your business with solution.",
-      nestedOptions: [
-        {
-          title: "Sub Solution 2-1",
-          description: "Detail of Sub Solution 2-1.",
-        },
-        {
-          title: "Sub Solution 2-2",
-          description: "Detail of Sub Solution 2-2.",
-        },
-      ],
-    },
-    {
-      logo: <FaDollarSign />,
-      title: "Business Solution 3",
-      description: "Optimize your business with solution.",
-      nestedOptions: [
-        {
-          title: "Sub Solution 3-1",
-          description: "Detail of Sub Solution 3-1.",
-        },
-        {
-          title: "Sub Solution 3-2",
-          description: "Detail of Sub Solution 3-2.",
-        },
-      ],
-    },
-    {
-      logo: <FaCogs />,
-      title: "Business Solution 4",
-      description: "Optimize your business with solution.",
-      nestedOptions: [
-        {
-          title: "Sub Solution 4-1",
-          description: "Detail of Sub Solution 4-1.",
-        },
-        {
-          title: "Sub Solution 4-2",
-          description: "Detail of Sub Solution 4-2.",
-        },
-      ],
-    },
-  ];
+type Item = {
+  label: string;
+  path?: string;
+  subItems?: SubItem[];
+};
 
-  const pricingOptions = [
-    {
-      logo: <FaDollarSign />,
-      title: "Pricing Plan 1",
-      description: "Check out our competitive pricing plan.",
-    },
-    {
-      logo: <FaDollarSign />,
-      title: "Pricing Plan 2",
-      description: "Check out our competitive pricing plan.",
-    },
-    {
-      logo: <FaDollarSign />,
-      title: "Pricing Plan 3",
-      description: "Check out our competitive pricing plan.",
-    },
-    {
-      logo: <FaDollarSign />,
-      title: "Pricing Plan 4",
-      description: "Check out our competitive pricing plan.",
-    },
-  ];
+type MenuData = {
+  [key: string]: {
+    label: string;
+    items: Item[];
+  };
+};
 
-  const handleMouseEnterBusiness = () => {
-    setIsBusinessDropdownOpen(true);
+const menuData: MenuData = {
+  individuals: {
+    label: "For Individuals",
+    items: [
+      {
+        label: "Career Paths",
+        path: "/career",
+      },
+      {
+        label: "Ethical Hacking Course",
+        path: "/ethical-hacking",
+      },
+      {
+        label: "Defensive Security",
+        subItems: [
+          {
+            label: "Become an incident handler >",
+            path: "/defensive/incident",
+          },
+          {
+            label: "Incident Handler Connection >",
+            path: "/defensive/connection",
+          },
+        ],
+      },
+      {
+        label: "Offensive Security",
+        subItems: [
+          {
+            label: "Penetration Tester Career Path >",
+            path: "/defensive/incident",
+          },
+        ],
+      },
+    ],
+  },
+  business: {
+    label: "For Business",
+    items: [
+      {
+        label: "Business",
+        path: "/business",
+      },
+    ],
+  },
+};
+
+const Header: React.FC = () => {
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [nestedHoveredItem, setNestedHoveredItem] = useState<string | null>(
+    null
+  );
+  const [hoverTimeout, setHoverTimeout] = useState<number | undefined>(
+    undefined
+  );
+  const [nestedHoverTimeout, setNestedHoverTimeout] = useState<
+    number | undefined
+  >(undefined);
+
+  const handleMouseEnter = (item: string) => {
+    if (hoverTimeout) clearTimeout(hoverTimeout);
+    setHoveredItem(item);
+
+    setNestedHoveredItem(null);
   };
 
-  const handleMouseLeaveBusiness = () => {
-    setIsBusinessDropdownOpen(false);
-    setOpenNestedDropdown(null); // Close nested dropdown when main dropdown is closed
+  const handleMouseLeave = () => {
+    setHoverTimeout(setTimeout(() => setHoveredItem(null), 2000));
   };
 
-  const handleMouseEnterPricing = () => {
-    setIsPricingDropdownOpen(true);
+  const handleNestedMouseEnter = (nestedItem: string) => {
+    if (nestedHoverTimeout) clearTimeout(nestedHoverTimeout);
+    setNestedHoveredItem(nestedItem);
   };
 
-  const handleMouseLeavePricing = () => {
-    setIsPricingDropdownOpen(false);
+  const handleNestedMouseLeave = () => {
+    setNestedHoverTimeout(setTimeout(() => setNestedHoveredItem(null)));
   };
 
-  const handleMouseEnterNested = (index: any) => {
-    setOpenNestedDropdown(index);
-  };
-
-  const handleMouseLeaveNested = () => {
-    setOpenNestedDropdown(null);
-  };
+  useEffect(() => {
+    return () => {
+      if (hoverTimeout) clearTimeout(hoverTimeout);
+      if (nestedHoverTimeout) clearTimeout(nestedHoverTimeout);
+    };
+  }, [hoverTimeout, nestedHoverTimeout]);
 
   return (
-    <div className="bg-[black] text-white border-b-[1px] border-[#054ADA]">
+    <div className="bg-black-950 text-white border-b-[1px] border-[#054ADA]">
       <div className="px-[100px] py-[30px] flex flex-row justify-between">
         <div className="flex flex-row items-center gap-10 p-0">
-          <img src="/images/group.png" alt="certbar logo" className="w-[150px]" />
+          <Link href="/">
+            <img
+              src="/images/group.png"
+              alt="certbar logo"
+              className="w-[150px]"
+            />
+          </Link>
           <ul className="flex items-center gap-7">
-            <li
-              className="flex flex-row items-center gap-1 hover:text-gray-400 cursor-pointer relative"
-              onMouseEnter={handleMouseEnterPricing}
-              onMouseLeave={handleMouseLeavePricing}
-            >
-              For Individuals <IoIosArrowDown size={10} />
-              {isPricingDropdownOpen && (
-                <div className="absolute left-0 top-full mt-2 bg-[#1b1b1b] border border-gray-500 text-white p-4 shadow-md rounded w-[350px]">
-                  {pricingOptions.map((option, index) => (
-                    <div className="flex items-center mb-2 p-2" key={index}>
-                      <div className="w-10 h-10 mr-3">{option.logo}</div>
-                      <div>
-                        <h4 className="font-bold">{option.title}</h4>
-                        <p className="text-sm">{option.description}</p>
-                      </div>
-                    </div>
-                  ))}
+            {Object.keys(menuData).map((key) => (
+              <li
+                key={key}
+                className="flex flex-row items-center gap-1 hover:text-gray-400 cursor-pointer relative"
+                onMouseEnter={() => handleMouseEnter(key)}
+                onMouseLeave={handleMouseLeave}
+              >
+                <div className="flex items-center">
+                  {menuData[key].label} <IoIosArrowDown size={10} />
                 </div>
-              )}
-            </li>
-            <li
-              className="flex flex-row items-center gap-1 hover:text-gray-400 cursor-pointer relative"
-              onMouseEnter={handleMouseEnterBusiness}
-              onMouseLeave={handleMouseLeaveBusiness}
-            >
-              For Business <IoIosArrowDown size={10} />
-              {isBusinessDropdownOpen && (
-                <div className="absolute left-0 top-full bg-[#1b1b1b] border border-gray-500 text-white p-4 shadow-md rounded-[15px] w-[350px]">
-                  {businessOptions.map((option, index) => (
-                    <div
-                      className="flex items-center mb-2 p-3 relative hover:bg-gray-800 rounded"
-                      key={index}
-                      onMouseEnter={() => handleMouseEnterNested(index)}
-                      onMouseLeave={handleMouseLeaveNested}
-                    >
-                      <div className="w-10 h-10">{option.logo}</div>
-                      <div>
-                        <h4 className="font-bold">{option.title}</h4>
-                        <p className="text-sm">{option.description}</p>
-                      </div>
-                      {openNestedDropdown === index && (
-                        <div className="absolute left-full top-0 mt-2 ml-6 bg-gray-700 border border-gray-500 text-white p-4 shadow-md rounded w-[250px]">
-                          {option.nestedOptions.map((nestedOption, nestedIndex) => (
-                            <div className="mb-2" key={nestedIndex}>
-                              <h5 className="font-bold">{nestedOption.title}</h5>
-                              <p className="text-sm">{nestedOption.description}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </li>
+                {hoveredItem === key && menuData[key].items.length > 0 && (
+                  <div
+                    className="absolute top-full left-0 mt-2 p-2 bg-gray-950 text-white border border-gray-300 rounded-lg shadow-lg z-10 w-[300px]"
+                    onMouseEnter={() =>
+                      hoverTimeout && clearTimeout(hoverTimeout)
+                    }
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <ul>
+                      {menuData[key].items.map((item, idx) => (
+                        <li
+                          key={idx}
+                          className="hover:bg-gray-600 p-2 relative rounded-lg duration-200"
+                          onMouseEnter={() =>
+                            item.subItems
+                              ? handleNestedMouseEnter(`${key}-${idx}`)
+                              : null
+                          }
+                          onMouseLeave={() =>
+                            item.subItems ? handleNestedMouseLeave() : null
+                          }
+                        >
+                          {item.path ? (
+                            <Link href={item.path}>{item.label}</Link>
+                          ) : (
+                            item.label
+                          )}
+                          {nestedHoveredItem === `${key}-${idx}` &&
+                            item.subItems && (
+                              <div
+                                className="absolute top-0 left-full mt-2 ml-2 p-4 bg-gray-950 text-white border border-gray-300 rounded-lg shadow-lg z-10 w-[300px]"
+                                onMouseEnter={() =>
+                                  nestedHoverTimeout &&
+                                  clearTimeout(nestedHoverTimeout)
+                                }
+                                onMouseLeave={handleNestedMouseLeave}
+                              >
+                                <ul>
+                                  {item.subItems.map((subItem, subIdx) => (
+                                    <li
+                                      key={subIdx}
+                                      className="hover:bg-gray-600 p-2 cursor-pointer rounded-lg duration-200"
+                                    >
+                                      <Link href={subItem.path}>
+                                        {subItem.label}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </li>
+            ))}
           </ul>
         </div>
         <div>
-          <GradientButton variant="border-gradient">Free Team Demos</GradientButton>
+          <GradientButton variant="border-gradient">
+            Free Team Demos
+          </GradientButton>
         </div>
       </div>
     </div>

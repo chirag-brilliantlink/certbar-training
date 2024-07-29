@@ -11,7 +11,7 @@
 
 /* styles/GradientText.module.css */
 .gradient-text {
-  background: linear-gradient(to right, #00aeef, #054ada, #203d7d);
+  background: linear-gradient(to right, #00aeef, #054ada);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
