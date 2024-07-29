@@ -58,7 +58,10 @@ const Learn = () => {
           </div>
           <div className="w-2/5 pl-10">
             {Data.map((item) => (
-              <div key={item.id} className="mb-4 border-b-[1px]">
+              <div
+                key={item.id}
+                className="py-6 border-b-[1px] border-gray-950"
+              >
                 <div
                   className={`cursor-pointer flex items-center justify-between text-[24px] font-light ${
                     expandedId === item.id ? "text-white" : "text-gray-300"
@@ -77,7 +80,7 @@ const Learn = () => {
                 {expandedId === item.id && (
                   <div
                     className={`mt-2 text-[18px] ${
-                      expandedId === item.id ? "h-[100px]" : "h-0"
+                      expandedId === item.id ? "h-[100px] text-gray-400" : "h-0"
                     } duration-200`}
                   >
                     {item.description}

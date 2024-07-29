@@ -4,7 +4,7 @@ import React from "react";
 
 const Landing = () => {
   return (
-    <div className="bg-[black] text-white ">
+    <div className="bg-black-950 text-white ">
       <div className="px-[100px] py-[90px]">
         <div className="flex flex-row">
           <div className="w-[60%]">
@@ -23,11 +23,11 @@ const Landing = () => {
               robust protection for your business.
             </p>
             <div className="pt-10 flex gap-3">
-              <GradientButton variant="bg-gradient">
-                Certbar Business
-              </GradientButton>
               <GradientButton variant="border-gradient">
                 Certbar Training
+              </GradientButton>
+              <GradientButton variant="bg-gradient">
+                Certbar Business
               </GradientButton>
             </div>
           </div>
