@@ -25,8 +25,14 @@ const MarqueeComponent: React.FC<MarqueeComponentProps> = ({ data }) => {
       )}
       {data.header && (
         <div className="flex flex-col items-center text-center gap-3">
-          <h1 className="text-[50px] w-[70%] pb-10">{data.header}</h1>
-          {data.description && <p>{data.description}</p>}
+          <h1 className="text-[24px] md:text-[35px] xl:text-[50px] w-[70%] pb-10">
+            {data.header}
+          </h1>
+          {data.description && (
+            <p className="text-[14px] md:text-[16px] text-gray-300">
+              {data.description}
+            </p>
+          )}
         </div>
       )}
       <ul className="wrapper">
@@ -45,7 +51,7 @@ const MarqueeComponent: React.FC<MarqueeComponentProps> = ({ data }) => {
             <img
               src={process.env.NEXT_PUBLIC_MEDIA_URL + item.attributes.url}
               alt={`Trust image ${item.id}`}
-              className="w-[160px] h-[100px] object-contain"
+              className="w-[80px] md:w-[160px] h-[100px] object-contain"
             />
           </li>
         ))}

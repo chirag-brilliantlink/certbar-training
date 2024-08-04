@@ -12,7 +12,7 @@ const GradientButton = ({
   variant = "bg-gradient",
 }: GradientButtonProps) => {
   const baseStyles =
-    "py-3 px-5 rounded-[15px] text-white hover:shadow-[0px_11px_54px_14px_#022570] focus:outline-none duration-200";
+    "py-1 xl:py-3 px-2 xl:px-5 rounded-[15px] text-white hover:shadow-[0px_11px_54px_14px_#022570] focus:outline-none duration-200 text-[14px] xl:text-[16px]";
   const gradientStyles =
     variant === "bg-gradient"
       ? "bg-gradient-to-r from-[#00AEEF] via-[#054ADA] to-[#022570]"

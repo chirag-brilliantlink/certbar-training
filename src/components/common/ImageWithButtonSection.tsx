@@ -19,20 +19,22 @@ const Landing: React.FC<LandingProps> = ({ data }) => {
 
   return (
     <div className="bg-black-950 text-white">
-      <div className="px-[100px] py-[50px]">
+      <div className="px-[20px] sm:px-[40px] md:px-[80px] xl:px-[100px] py-[30px]">
         <div
-          className={`flex items-center gap-10 ${
+          className={`flex items-start md:items-center gap-10 ${
             data?.ImageSectionPosition === true
-              ? "flex-row-reverse"
-              : "flex-row"
+              ? "flex-col md:flex-row-reverse"
+              : "flex-col md:flex-row"
           }`}
         >
-          <div className={hasImage ? "w-[50%]" : "w-[100%]"}>
+          <div className={hasImage ? "w-[100%] xl:w-[50%]" : "w-[100%]"}>
             {data?.header && (
-              <h1 className="font-normal text-[50px]">{data.header}</h1>
+              <h1 className="font-normal text-[24px] md:text-[35px] xl:text-[50px]">
+                {data.header}
+              </h1>
             )}
             {data?.description && data.description.length > 0 && (
-              <div className="text-[16px] font-normal text-gray-300 pt-4">
+              <div className="text-[14px] md:text-[16px] font-normal text-gray-300 pt-4">
                 {data.description.map((para, index) => (
                   <div key={index}>
                     {para.children?.map((textNode, i) =>
@@ -47,7 +49,7 @@ const Landing: React.FC<LandingProps> = ({ data }) => {
               </div>
             )}
             {data?.GradientButton && data.GradientButton.length > 0 && (
-              <div className="pt-10 flex gap-3">
+              <div className="pt-10 flex flex-col sm:flex-row gap-3">
                 {data.GradientButton.map((button, index) => (
                   <GradientButton key={index} variant={button.Variant}>
                     {button.ValueName}
@@ -57,7 +59,7 @@ const Landing: React.FC<LandingProps> = ({ data }) => {
             )}
           </div>
           {hasImage && (
-            <div className="w-[50%]">
+            <div className="w-full xl:w-[50%]">
               <img
                 src={
                   process.env.NEXT_PUBLIC_MEDIA_URL +

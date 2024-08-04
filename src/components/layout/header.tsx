@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import GradientButton from "../common/gradientButton";
 import Link from "next/link";
+import ContactModal from "../common/FormModal";
 
 type SubItem = {
   id: number;
@@ -67,6 +68,7 @@ const Header: React.FC = () => {
   const [nestedHoveredItem, setNestedHoveredItem] = useState<string | null>(
     null
   );
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const getData = async () => {
@@ -162,13 +164,13 @@ const Header: React.FC = () => {
 
   return (
     <div className="bg-black-950 text-white border-b-[1px] border-[#054ADA]">
-      <div className="px-[100px] py-[30px] flex flex-row justify-between">
+      <div className="px-[20px] sm:px-[40px] md:px-[80px] xl:px-[100px] py-[30px] flex flex-row justify-between">
         <div className="flex flex-row items-center gap-10 p-0">
           <Link href="/">
             <img
               src="/images/group.png"
               alt="certbar logo"
-              className="w-[150px]"
+              className="w-[100px] xl:w-[150px]"
             />
           </Link>
           <ul className="flex items-center gap-7">
@@ -178,7 +180,7 @@ const Header: React.FC = () => {
                 className="flex flex-row items-center gap-1 hover:text-gray-400 cursor-pointer relative"
                 onMouseEnter={() => handleMouseEnter(key)}
               >
-                <div className="flex items-center">
+                <div className="hidden md:flex items-center text-[14px] md:text-[16px]">
                   {menuData[key].label} <IoIosArrowDown size={10} />
                 </div>
                 {hoveredItem === key && menuData[key].items.length > 0 && (
@@ -252,11 +254,23 @@ const Header: React.FC = () => {
             ))}
           </ul>
         </div>
-        <div>
-          <GradientButton variant="border-gradient">
+        <div className="hidden md:flex">
+          <GradientButton
+            variant="border-gradient"
+            onClick={() => setIsModalOpen(true)}
+          >
             Free Team Demos
           </GradientButton>
         </div>
+        <div className="flex flex-col md:hidden  gap-1">
+          <span className="bg-white h-[1px] w-5"></span>
+          <span className="bg-white h-[1px] w-5"></span>
+          <span className="bg-white h-[1px] w-5"></span>
+        </div>
+        <ContactModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       </div>
     </div>
   );

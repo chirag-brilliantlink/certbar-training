@@ -79,15 +79,15 @@ const TeamPopupSection: React.FC<TeamPopupSectionProps> = ({ data }) => {
 
   return (
     <div className="bg-[black] text-white">
-      <div className="px-[100px] pb-[150px]">
+      <div className="px-[20px] sm:px-[40px] md:px-[80px] xl:px-[100px] py-[30px]">
         <div
-          className={`flex items-center ${
+          className={`flex flex-col md:flex-row gap-5 items-center ${
             data.button.position === null || data.button.position === false
               ? "justify-between"
               : "justify-center"
           } pb-[50px]`}
         >
-          <h1 className="text-[50px] font-light">
+          <h1 className="text-[24px] md:text-[35px] xl:text-[50px] font-light">
             <span className="gradient-text">{data.header}</span>
           </h1>
           {data.button.LinkTo && (
@@ -98,11 +98,11 @@ const TeamPopupSection: React.FC<TeamPopupSectionProps> = ({ data }) => {
             </Link>
           )}
         </div>
-        <div className="flex justify-between w-[90%] m-auto">
+        <div className="flex justify-between flex-wrap w-full xl:w-[90%] m-auto">
           {data.TeamPopupSection.map((member) => (
             <div
               key={member.id}
-              className="w-[24%] border-[1px] border-gray-600 bg-gray-950 rounded-lg overflow-hidden cursor-pointer"
+              className="w-full xl:w-[24%] border-[1px] border-gray-600 bg-gray-950 rounded-lg overflow-hidden cursor-pointer"
               onClick={() => handleCardClick(member)}
             >
               <img

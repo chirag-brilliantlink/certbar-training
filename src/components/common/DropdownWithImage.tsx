@@ -39,11 +39,13 @@ const Learn: React.FC<LearnProps> = ({ data }) => {
 
   return (
     <div className="bg-black-950 text-white">
-      <div className="px-[100px] py-[90px]">
-        <h1 className="text-center text-[50px] font-normal">{header}</h1>
+      <div className="px-[20px] sm:px-[40px] md:px-[80px] xl:px-[100px] py-[30px]">
+        <h1 className="text-center text-[24px] md:text-[35px] xl:text-[50px] font-normal">
+          {header}
+        </h1>
         {DropDown.length > 0 && (
-          <div className="flex mt-10 items-center">
-            <div className={`w-${expandedId ? "3/5" : "full"}`}>
+          <div className="flex flex-col xl:flex-row mt-10 items-center">
+            <div className={`w-full xl:w-${expandedId ? "3/5" : "full"}`}>
               {expandedId && expandedItem && (
                 <img
                   src={
@@ -52,18 +54,22 @@ const Learn: React.FC<LearnProps> = ({ data }) => {
                     "/images/default.jpg"
                   }
                   alt={expandedId.ImageAlt}
-                  className="w-full h-[500px] object-cover"
+                  className="w-full h-[300px] xl:h-[500px] object-cover"
                 />
               )}
             </div>
-            <div className={`w-${expandedId ? "2/5" : "full"} pl-10`}>
+            <div
+              className={`w-full xl:w-${
+                expandedId ? "2/5" : "full"
+              } pl-0 xl:pl-10`}
+            >
               {DropDown.map((item) => (
                 <div
                   key={item.id}
                   className="py-6 border-b-[1px] border-gray-950"
                 >
                   <div
-                    className={`cursor-pointer flex items-center justify-between text-[24px] font-light ${
+                    className={`cursor-pointer flex items-center justify-between text-[18px] xl:text-[24px] font-light ${
                       expandedId === item.id ? "text-white" : "text-gray-300"
                     } duration-200`}
                     onClick={() => handleExpand(item.id)}
@@ -79,7 +85,7 @@ const Learn: React.FC<LearnProps> = ({ data }) => {
                   </div>
                   {expandedId === item.id && (
                     <div
-                      className={`mt-2 text-[18px] ${
+                      className={`mt-2 text-[14px] md:text-[16px] xl:text-[18px] ${
                         expandedId === item.id
                           ? "h-[100px] text-gray-400"
                           : "h-0"

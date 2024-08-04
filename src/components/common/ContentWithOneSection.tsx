@@ -46,9 +46,11 @@ const ContentWithOneSection: React.FC<ContentWithOneSectionProps> = ({
   };
 
   return (
-    <div className="px-[100px] pt-[90px] bg-black-950 text-white">
+    <div className="px-[20px] sm:px-[40px] md:px-[80px] xl:px-[100px] pt-[90px] bg-black-950 text-white">
       <div className="flex flex-col gap-5">
-        <h1 className="text-[50px]">{data?.header}</h1>
+        <h1 className="text-[24px] md:text-[35px] xl:text-[50px]">
+          {data?.header}
+        </h1>
         {renderContent()}
       </div>
     </div>
