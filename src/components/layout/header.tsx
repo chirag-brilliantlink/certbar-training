@@ -5,13 +5,16 @@ import GradientButton from "../common/gradientButton";
 import Link from "next/link";
 
 type SubItem = {
+  id: number;
   label: string;
   path: string;
 };
 
 type Item = {
+  id: number;
   label: string;
-  path?: string;
+  path: string | null;
+  description: string;
   subItems?: SubItem[];
 };
 
@@ -22,91 +25,140 @@ type MenuData = {
   };
 };
 
-const menuData: MenuData = {
-  individuals: {
-    label: "For Individuals",
-    items: [
-      {
-        label: "Career Paths",
-        path: "/career",
-      },
-      {
-        label: "Ethical Hacking Course",
-        path: "/ethical-hacking",
-      },
-      {
-        label: "Defensive Security",
-        subItems: [
-          {
-            label: "Become an incident handler >",
-            path: "/defensive/incident",
-          },
-          {
-            label: "Incident Handler Connection >",
-            path: "/defensive/connection",
-          },
-        ],
-      },
-      {
-        label: "Offensive Security",
-        subItems: [
-          {
-            label: "Penetration Tester Career Path >",
-            path: "/defensive/incident",
-          },
-        ],
-      },
-    ],
-  },
-  business: {
-    label: "For Business",
-    items: [
-      {
-        label: "Business",
-        path: "/business",
-      },
-    ],
-  },
-};
+const fetchData = async () => {
+  const businessUrl = `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/business-navs?populate=deep`;
+  const individualsUrl = `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/individuals?populate=deep`;
 
+  try {
+    const businessResponse = await fetch(businessUrl, {
+      headers: {
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+      },
+    });
+
+    const individualsResponse = await fetch(individualsUrl, {
+      headers: {
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+      },
+    });
+
+    if (!businessResponse.ok || !individualsResponse.ok) {
+      throw new Error(
+        `HTTP error! status: ${
+          !businessResponse.ok
+            ? businessResponse.status
+            : individualsResponse.status
+        }`
+      );
+    }
+
+    const businessData = await businessResponse.json();
+    const individualsData = await individualsResponse.json();
+
+    return { businessData, individualsData };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+};
 const Header: React.FC = () => {
+  const [menuData, setMenuData] = useState<MenuData | null>(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [nestedHoveredItem, setNestedHoveredItem] = useState<string | null>(
     null
   );
-  const [hoverTimeout, setHoverTimeout] = useState<number | undefined>(
-    undefined
-  );
-  const [nestedHoverTimeout, setNestedHoverTimeout] = useState<
-    number | undefined
-  >(undefined);
+
+  useEffect(() => {
+    const getData = async () => {
+      const fetchedData = await fetchData();
+      if (fetchedData) {
+        const { businessData, individualsData } = fetchedData;
+
+        const generateSubItemPath = (category: string, slug: string) => {
+          switch (category) {
+            case "Defensive Security":
+              return `/defensive/${slug}`;
+            case "Offensive Security":
+              return `/offensive/${slug}`;
+            default:
+              return `/path/${slug}`; // Fallback for other categories
+          }
+        };
+
+        const menu: MenuData = {
+          individuals: {
+            label: "For Individuals",
+            items: individualsData.data.map((item: any) => ({
+              id: item.id,
+              label: item.attributes.Category,
+              path: item.attributes.LinkTo,
+              description: item.attributes.description,
+              subItems: item.attributes.sub_individuals.data.map(
+                (sub: any) => ({
+                  id: sub.id,
+                  label: sub.attributes.sub_field_context,
+                  path: generateSubItemPath(
+                    item.attributes.Category,
+                    sub.attributes.slug
+                  ),
+                })
+              ),
+            })),
+          },
+          business: {
+            label: "For Business",
+            items: businessData.data.map((item: any) => ({
+              id: item.id,
+              label: item.attributes.Category,
+              path: item.attributes.LinkTo,
+              description: item.attributes.description,
+              subItems: item.attributes.sub_individuals?.data?.map(
+                (sub: any) => ({
+                  id: sub.id,
+                  label: sub.attributes.sub_field_context,
+                  path: generateSubItemPath(
+                    item.attributes.Category,
+                    sub.attributes.slug
+                  ),
+                })
+              ),
+            })),
+          },
+        };
+
+        setMenuData(menu);
+      }
+    };
+
+    getData();
+  }, []);
 
   const handleMouseEnter = (item: string) => {
-    if (hoverTimeout) clearTimeout(hoverTimeout);
     setHoveredItem(item);
-
-    setNestedHoveredItem(null);
+    setNestedHoveredItem(null); // Reset the nested hover when hovering a new item
   };
 
   const handleMouseLeave = () => {
-    setHoverTimeout(setTimeout(() => setHoveredItem(null), 2000));
+    setHoveredItem(null);
+    setNestedHoveredItem(null);
   };
 
-  const handleNestedMouseEnter = (nestedItem: string) => {
-    if (nestedHoverTimeout) clearTimeout(nestedHoverTimeout);
-    setNestedHoveredItem(nestedItem);
-  };
-
-  const handleNestedMouseLeave = () => {
-    setNestedHoverTimeout(setTimeout(() => setNestedHoveredItem(null)));
+  const handleNestedMouseEnter = (nestedItem: string, hasSubItems: boolean) => {
+    if (hasSubItems) {
+      setNestedHoveredItem(nestedItem);
+    } else {
+      setNestedHoveredItem(null); // Clear nested hover if there are no sub-items
+    }
   };
 
   useEffect(() => {
     return () => {
-      if (hoverTimeout) clearTimeout(hoverTimeout);
-      if (nestedHoverTimeout) clearTimeout(nestedHoverTimeout);
+      setHoveredItem(null);
+      setNestedHoveredItem(null);
     };
-  }, [hoverTimeout, nestedHoverTimeout]);
+  }, []);
+
+  if (!menuData) return null;
 
   return (
     <div className="bg-black-950 text-white border-b-[1px] border-[#054ADA]">
@@ -125,58 +177,68 @@ const Header: React.FC = () => {
                 key={key}
                 className="flex flex-row items-center gap-1 hover:text-gray-400 cursor-pointer relative"
                 onMouseEnter={() => handleMouseEnter(key)}
-                onMouseLeave={handleMouseLeave}
               >
                 <div className="flex items-center">
                   {menuData[key].label} <IoIosArrowDown size={10} />
                 </div>
                 {hoveredItem === key && menuData[key].items.length > 0 && (
                   <div
-                    className="absolute top-full left-0 mt-2 p-2 bg-gray-950 text-white border border-gray-300 rounded-lg shadow-lg z-10 w-[300px]"
-                    onMouseEnter={() =>
-                      hoverTimeout && clearTimeout(hoverTimeout)
-                    }
+                    className="absolute top-full left-0 mt-2 p-2 bg-gray-950 text-white border border-gray-900 rounded-lg shadow-lg z-10 w-[300px]"
+                    onMouseEnter={() => setHoveredItem(key)}
                     onMouseLeave={handleMouseLeave}
                   >
                     <ul>
                       {menuData[key].items.map((item, idx) => (
                         <li
-                          key={idx}
-                          className="hover:bg-gray-600 p-2 relative rounded-lg duration-200"
+                          key={item.id}
+                          className="hover:bg-gray-900 p-2 relative rounded-lg duration-200"
                           onMouseEnter={() =>
-                            item.subItems
-                              ? handleNestedMouseEnter(`${key}-${idx}`)
-                              : null
-                          }
-                          onMouseLeave={() =>
-                            item.subItems ? handleNestedMouseLeave() : null
+                            handleNestedMouseEnter(
+                              `${key}-${idx}`,
+                              !!item.subItems && item.subItems.length > 0
+                            )
                           }
                         >
                           {item.path ? (
-                            <Link href={item.path}>{item.label}</Link>
+                            <Link
+                              href={item.path}
+                              className="flex flex-col gap-3"
+                            >
+                              {item.label}{" "}
+                              <h6 className="text-[12px] text-gray-500">
+                                {item.description}
+                              </h6>
+                            </Link>
                           ) : (
-                            item.label
+                            <div className="flex flex-col gap-3">
+                              {item.label}
+                              <h6 className="text-[12px] text-gray-500">
+                                {item.description}
+                              </h6>
+                            </div>
                           )}
                           {nestedHoveredItem === `${key}-${idx}` &&
-                            item.subItems && (
+                            item.subItems &&
+                            item.subItems.length > 0 && (
                               <div
-                                className="absolute top-0 left-full mt-2 ml-2 p-4 bg-gray-950 text-white border border-gray-300 rounded-lg shadow-lg z-10 w-[300px]"
+                                className="absolute top-0 left-full mt-2 ml-2 p-2 bg-gray-950 text-white border border-gray-900 rounded-lg shadow-lg z-10 w-[300px]"
                                 onMouseEnter={() =>
-                                  nestedHoverTimeout &&
-                                  clearTimeout(nestedHoverTimeout)
+                                  setNestedHoveredItem(`${key}-${idx}`)
                                 }
-                                onMouseLeave={handleNestedMouseLeave}
                               >
-                                <ul>
-                                  {item.subItems.map((subItem, subIdx) => (
-                                    <li
-                                      key={subIdx}
-                                      className="hover:bg-gray-600 p-2 cursor-pointer rounded-lg duration-200"
+                                <ul className="flex flex-col gap-2">
+                                  {item.subItems.map((subItem) => (
+                                    <Link
+                                      href={subItem.path || "#"}
+                                      className="cursor-pointer"
                                     >
-                                      <Link href={subItem.path}>
+                                      <li
+                                        key={subItem.id}
+                                        className="hover:bg-gray-900 p-4  rounded-lg duration-200"
+                                      >
                                         {subItem.label}
-                                      </Link>
-                                    </li>
+                                      </li>
+                                    </Link>
                                   ))}
                                 </ul>
                               </div>

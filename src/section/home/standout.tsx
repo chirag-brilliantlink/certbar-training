@@ -4,22 +4,19 @@ import { GoArrowRight, GoShieldCheck } from "react-icons/go";
 
 const Data = [
   {
-    title: "Title 1",
+    title: "Career Path",
   },
   {
-    title: "Title 2",
+    title: "Ethical Hacking",
   },
   {
-    title: "Title 3",
+    title: "Offensive Security",
   },
   {
-    title: "Title 4",
+    title: "Defensive Security",
   },
   {
-    title: "Title 5",
-  },
-  {
-    title: "Title 6",
+    title: "Business",
   },
 ];
 
@@ -32,17 +29,16 @@ const Standout = () => {
           <span className="gradient-text">advance your career</span> with
           Certbar
         </h1>
-        <div className="flex flex-wrap justify-between gap-7 w-full pb-6">
+        <div className="flex flex-wrap items-center text-center justify-center gap-7 w-full pb-6">
           {Data.map((data, index) => (
             <div
               key={index}
-              className="border-[1px] border-gray-600 hover:border-[#00AEEF] rounded-[10px] py-2 px-4 w-[30%] flex items-center justify-between"
+              className="border-[1px] border-gray-100 hover:border-[#00AEEF] rounded-3xl py-3 px-4 w-[30%] flex items-center justify-center text-center"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center text-center gap-2">
                 <GoShieldCheck size={25} />
                 <h1>{data.title}</h1>
               </div>
-              <GoArrowRight />
             </div>
           ))}
         </div>
