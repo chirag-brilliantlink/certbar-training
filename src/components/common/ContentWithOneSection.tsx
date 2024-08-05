@@ -31,7 +31,11 @@ const ContentWithOneSection: React.FC<ContentWithOneSectionProps> = ({
 
       return (
         <React.Fragment key={index}>
-          {paragraphText && <p className="text-gray-300">{paragraphText}</p>}
+          {paragraphText && (
+            <p className="text-gray-300 text-[14px] md:text-[16px] xl:text-[18px]">
+              {paragraphText}
+            </p>
+          )}
           {listText && (
             <ul className="flex flex-col items-start gap-5">
               <li className="flex items-start text-start gap-2">
