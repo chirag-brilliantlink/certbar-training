@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import GradientButton from "@/components/common/gradientButton";
 import Link from "next/link";
+import { RxCross2 } from "react-icons/rx";
 
 // Define TeamMember type
 interface TeamMember {
@@ -49,13 +50,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black-900 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-black-950 p-6 rounded-md relative w-[70%]">
+    <div className="fixed inset-0 bg-black-950 bg-opacity-80 flex items-center justify-center z-50">
+      <div className="bg-white text-black-950 rounded-md relative w-[70%] h-[300px] overflow-hidden">
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-black text-xl font-bold"
+          className="absolute top-4 right-4 text-black text-xl font-bold"
         >
-          &times;
+          <RxCross2 />
         </button>
         {children}
       </div>
@@ -98,7 +99,7 @@ const TeamPopupSection: React.FC<TeamPopupSectionProps> = ({ data }) => {
             </Link>
           )}
         </div>
-        <div className="flex justify-between flex-wrap w-full xl:w-[90%] m-auto">
+        <div className="flex flex-wrap w-full xl:w-[90%] m-auto gap-5 justify-evenly">
           {data.TeamPopupSection.map((member) => (
             <div
               key={member.id}
@@ -123,15 +124,16 @@ const TeamPopupSection: React.FC<TeamPopupSectionProps> = ({ data }) => {
         </div>
         <Modal isOpen={isModalOpen} onClose={closeModal}>
           {selectedMember && (
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-5 h-full">
               <img
                 src={
                   process.env.NEXT_PUBLIC_MEDIA_URL +
                   selectedMember.Photo?.data?.attributes.url
                 }
                 alt={selectedMember.Name}
+                className="w-[30%] h-full object-cover"
               />
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-6 p-6">
                 <h1 className="text-[20px] font-bold">{selectedMember.Name}</h1>
                 <h2 className="text-[18px] text-gray-700">
                   {selectedMember.Qualification}

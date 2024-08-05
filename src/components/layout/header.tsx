@@ -4,6 +4,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import GradientButton from "../common/gradientButton";
 import Link from "next/link";
 import ContactModal from "../common/FormModal";
+import HamburgerMenu from "../common/MobileMenu";
 
 type SubItem = {
   id: number;
@@ -69,6 +70,7 @@ const Header: React.FC = () => {
     null
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isHamOpen, setIsHamOpen] = useState(false);
 
   useEffect(() => {
     const getData = async () => {
@@ -134,6 +136,16 @@ const Header: React.FC = () => {
 
     getData();
   }, []);
+
+  useEffect(() => {
+    // Lock the body scroll when hamburger menu is open
+    document.body.style.overflow = isHamOpen ? "hidden" : "auto";
+
+    return () => {
+      // Reset the body scroll when component unmounts or menu is closed
+      document.body.style.overflow = "auto";
+    };
+  }, [isHamOpen]);
 
   const handleMouseEnter = (item: string) => {
     setHoveredItem(item);
@@ -262,7 +274,10 @@ const Header: React.FC = () => {
             Free Team Demos
           </GradientButton>
         </div>
-        <div className="flex flex-col md:hidden  gap-1">
+        <div
+          className="flex flex-col items-center justify-center md:hidden gap-1 z-[999]"
+          onClick={() => setIsHamOpen((prev) => !prev)}
+        >
           <span className="bg-white h-[1px] w-5"></span>
           <span className="bg-white h-[1px] w-5"></span>
           <span className="bg-white h-[1px] w-5"></span>
@@ -271,6 +286,15 @@ const Header: React.FC = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         />
+        {isHamOpen && (
+          <HamburgerMenu
+            individualsData={menuData.individuals}
+            businessData={menuData.business}
+          />
+        )}
+        {isHamOpen && (
+          <div className="fixed top-0 left-0 w-full h-full bg-black-950 bg-opacity-80 z-40"></div>
+        )}
       </div>
     </div>
   );

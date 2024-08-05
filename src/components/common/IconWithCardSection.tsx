@@ -24,7 +24,6 @@ interface TrainingProps {
 }
 
 const Training: React.FC<TrainingProps> = ({ data }) => {
-  console.log(data);
   return (
     <div className="bg-black-950 text-[white]">
       <div className="px-[20px] sm:px-[40px] md:px-[80px] xl:px-[100px] py-[30px] w-full">

@@ -67,7 +67,7 @@ const CoursesSection: React.FC<CoursesSectionProps> = ({ data }) => {
             </Link>
           )}
         </div>
-        <div className="flex justify-between flex-wrap w-full xl:w-[90%] m-auto">
+        <div className="flex flex-wrap w-full xl:w-[90%] m-auto gap-5 justify-evenly">
           {data.Courses.map((course) => (
             <div
               key={course.id}

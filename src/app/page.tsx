@@ -1,10 +1,3 @@
-import Training from "@/section/home/training";
-import Landing from "@/section/home/landing";
-import Learn from "@/section/home/learn";
-import MarqueeComponent from "@/section/home/trustSlider";
-import Team from "@/section/home/team";
-import Standout from "@/section/home/standout";
-import CertTeam from "@/section/home/certTeam";
 import HomePage from "@/section/home/Home";
 
 async function fetchData() {
@@ -14,6 +7,7 @@ async function fetchData() {
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+        "Cache-Control": "no-cache",
       },
     });
 
