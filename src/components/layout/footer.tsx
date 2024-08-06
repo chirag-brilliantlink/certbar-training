@@ -146,7 +146,7 @@ const Footer = () => {
               Start <span className="gradient-text">cybersecurity</span>{" "}
               training for <span className="gradient-text">free</span> today
             </h1>
-            <p className="w-full xl:w-2/3 text-gray-400 pt-5">
+            <p className="w-full xl:w-2/3 text-gray-400 pt-5 ">
               Join over 3 million professionals and 96% of Fortune 1000
               companies improving their cybersecurity training & capabilities
               with Cybrary.
@@ -181,7 +181,7 @@ const Footer = () => {
                 alt="certbar logo"
                 className="w-36"
               />
-              <p>
+              <p className="text-[14px] md:text-[16px] text-gray-300">
                 Our commitment to excellence goes beyond serving our clients. We
                 believe that by continuously enhancing our own expertise and
                 methodologies, we can better support and empower your
