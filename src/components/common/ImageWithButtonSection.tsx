@@ -5,7 +5,7 @@ interface DataProps {
   header?: string;
   description?: { children: { text: string }[] }[];
   GradientButton?: { Variant: any; ValueName: string }[];
-  ImageSection?: { data: { attributes: { url: string } } };
+  ImageSection?: { data?: { attributes?: { url: string } } };
   ImageSectionPosition?: boolean;
 }
 
@@ -14,8 +14,7 @@ interface LandingProps {
 }
 
 const Landing: React.FC<LandingProps> = ({ data }) => {
-  const hasImage =
-    data?.ImageSection && data.ImageSection.data?.attributes?.url;
+  const hasImage = data?.ImageSection?.data?.attributes?.url;
 
   return (
     <div className="bg-black-950 text-white">
@@ -33,7 +32,7 @@ const Landing: React.FC<LandingProps> = ({ data }) => {
                 {data.header}
               </h1>
             )}
-            {data?.description && data?.description?.length > 0 && (
+            {data?.description && data.description.length > 0 && (
               <div className="text-[14px] md:text-[16px] font-normal text-gray-300 pt-4">
                 {data.description.map((para, index) => (
                   <div key={index}>
@@ -63,7 +62,7 @@ const Landing: React.FC<LandingProps> = ({ data }) => {
               <img
                 src={
                   process.env.NEXT_PUBLIC_MEDIA_URL +
-                  data.ImageSection.data.attributes.url
+                  (data.ImageSection?.data?.attributes?.url ?? "")
                 }
                 alt="Landing Image"
                 className="w-[100%] h-full"

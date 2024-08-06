@@ -242,10 +242,11 @@ const Header: React.FC = () => {
                                 }
                               >
                                 <ul className="flex flex-col gap-2">
-                                  {item.subItems.map((subItem) => (
+                                  {item.subItems.map((subItem, index) => (
                                     <Link
                                       href={subItem.path || "#"}
                                       className="cursor-pointer"
+                                      key={index}
                                     >
                                       <li
                                         key={subItem.id}
