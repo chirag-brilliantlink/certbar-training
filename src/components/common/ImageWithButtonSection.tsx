@@ -33,7 +33,7 @@ const Landing: React.FC<LandingProps> = ({ data }) => {
                 {data.header}
               </h1>
             )}
-            {data?.description && data.description.length > 0 && (
+            {data?.description && data?.description?.length > 0 && (
               <div className="text-[14px] md:text-[16px] font-normal text-gray-300 pt-4">
                 {data.description.map((para, index) => (
                   <div key={index}>

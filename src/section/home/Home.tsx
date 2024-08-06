@@ -17,14 +17,14 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({ data }) => {
   return (
     <section>
-      <Landing data={data.data.attributes.home_page[0]} />
-      <MarqueeComponent data={data.data.attributes.home_page[1]} />
-      <Learn data={data.data.attributes.home_page[2]} />
-      <Training data={data.data.attributes.home_page[3]} />
-      <Landing data={data.data.attributes.home_page[4]} />
-      <Training data={data.data.attributes.home_page[5]} />
-      <CoursesSection data={data.data.attributes.home_page[7]} />
-      <TeamPopupSection data={data.data.attributes.home_page[6]} />
+      <Landing data={data?.data?.attributes.home_page[0]} />
+      <MarqueeComponent data={data?.data?.attributes.home_page[1]} />
+      <Learn data={data?.data?.attributes?.home_page[2]} />
+      <Training data={data?.data?.attributes.home_page[3]} />
+      <Landing data={data?.data?.attributes.home_page[4]} />
+      <Training data={data?.data?.attributes.home_page[5]} />
+      <CoursesSection data={data?.data?.attributes.home_page[7]} />
+      <TeamPopupSection data={data?.data?.attributes.home_page[6]} />
     </section>
   );
 };
