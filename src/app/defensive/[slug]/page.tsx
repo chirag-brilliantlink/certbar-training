@@ -43,7 +43,7 @@ const DefensivePage: React.FC<{ params: { slug: string } }> = ({ params }) => {
   }, [params.slug]);
 
   return (
-    <div>
+    <section>
       <Landing data={data?.attributes?.defensive_security_page[0]} />
       <SecurityTeam data={data?.attributes?.defensive_security_page[1]} />
       <ContentWithOneSection
@@ -51,7 +51,7 @@ const DefensivePage: React.FC<{ params: { slug: string } }> = ({ params }) => {
       />
       <Landing data={data?.attributes?.defensive_security_page[3]} />
       <Landing data={data?.attributes?.defensive_security_page[4]} />
-    </div>
+    </section>
   );
 };
 

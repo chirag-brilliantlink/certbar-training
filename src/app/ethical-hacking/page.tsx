@@ -32,14 +32,14 @@ async function fetchData() {
 const page = async () => {
   const data = await fetchData();
   return (
-    <div>
+    <section>
       <CardWithListSection data={data.data.attributes.ethical_hacking[0]} />
       <ContentWithTwoSections data={data.data.attributes.ethical_hacking[1]} />
       <ContentWithOneSection data={data.data.attributes.ethical_hacking[2]} />
       <ContentWithTagsSection data={data.data.attributes.ethical_hacking[3]} />
       <CardWithListSection data={data.data.attributes.ethical_hacking[4]} />
       <Landing data={data.data.attributes.ethical_hacking[5]} />
-    </div>
+    </section>
   );
 };
 

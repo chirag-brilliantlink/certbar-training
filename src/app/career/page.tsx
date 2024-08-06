@@ -2,7 +2,6 @@
 import CoursesSection from "@/components/common/CourseSection";
 import Training from "@/components/common/IconWithCardSection";
 import Landing from "@/components/common/ImageWithButtonSection";
-import GradientButton from "@/components/common/gradientButton";
 import React from "react";
 
 async function fetchData() {
@@ -30,12 +29,12 @@ async function fetchData() {
 const page = async () => {
   const data = await fetchData();
   return (
-    <div>
+    <section>
       <Landing data={data.data.attributes.career_path_page[0]} />
       <Landing data={data.data.attributes.career_path_page[1]} />
       <CoursesSection data={data.data.attributes.career_path_page[2]} />
       <Training data={data.data.attributes.career_path_page[3]} />
-    </div>
+    </section>
   );
 };
 

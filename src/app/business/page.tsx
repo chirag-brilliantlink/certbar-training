@@ -1,12 +1,8 @@
 import ContentWithTagsSection from "@/components/common/ ContentWithTag";
 import SecurityTeam from "@/components/common/ContentTimeSection";
 import ContentWithOneSection from "@/components/common/ContentWithOneSection";
-import Training from "@/components/common/IconWithCardSection";
 import Landing from "@/components/common/ImageWithButtonSection";
 import MarqueeComponent from "@/components/common/MarqueeSliderComponent";
-import GradientButton from "@/components/common/gradientButton";
-import ChooseUs from "@/section/business/ChooseUs";
-import WhySection from "@/section/business/WhySection";
 import React from "react";
 
 async function fetchData() {
@@ -34,13 +30,13 @@ async function fetchData() {
 const page = async () => {
   const data = await fetchData();
   return (
-    <div>
+    <section>
       <Landing data={data.data.attributes.business_page[0]} />
       <MarqueeComponent data={data.data.attributes.business_page[1]} />
       <SecurityTeam data={data.data.attributes.business_page[2]} />
       <ContentWithOneSection data={data.data.attributes.business_page[3]} />
       <ContentWithTagsSection data={data.data.attributes.business_page[4]} />
-    </div>
+    </section>
   );
 };
 
