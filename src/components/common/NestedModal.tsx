@@ -1,6 +1,18 @@
-import React from "react";
+import React, { CSSProperties, ReactNode } from "react";
 
-const CustomModal = ({ content, isVisible, onClose, style }) => {
+interface CustomModalProps {
+  content: ReactNode;
+  isVisible: boolean;
+  onClose: () => void;
+  style?: CSSProperties;
+}
+
+const CustomModal: React.FC<CustomModalProps> = ({
+  content,
+  isVisible,
+  onClose,
+  style,
+}) => {
   if (!isVisible) return null;
 
   return (
