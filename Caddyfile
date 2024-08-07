@@ -1,0 +1,234 @@
+{
+	# debug
+	admin off
+	auto_https off
+	# auto_https disable_certs
+	# local_certs
+	log {$DEFAULT_LOG:WARN}
+	servers {
+		protocols h1 h2 h2c
+		trusted_proxies static private_ranges
+		client_ip_headers CF-Connecting-IP X-Real-IP X-Forwarded-For
+	}
+}
+
+(common) {
+	encode zstd gzip
+
+	request_body {
+		max_size 1MB
+	}
+
+	header {
+		-Server
+		-server
+		-X-Powered-By
+		-Powered-By
+		-Product
+		# -X-Nextjs-Cache
+		# -X-Nextjs-Matched-Path
+		# -X-Nextjs-Page
+		# -X-Nextjs-Redirect
+
+		defer
+	}
+
+	log {
+		# output stderr
+		format json
+		level {$DEFAULT_ACCESS_LOG:INFO}
+	}
+}
+
+(security_headers) {
+	header {
+		# Some common security headers
+		# cache-control: no-cache, no-store, max-age=0
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		X-DNS-Prefetch-Control "on"
+		X-Download-Options "noopen"
+		X-Xss-Protection "0"
+		# X-XSS-Protection "1; mode=block"
+		Referrer-Policy "strict-origin-when-cross-origin" # OR no-referrer-when-downgrade
+		Permissions-Policy "geolocation=(self), camera=(), microphone=(), fullscreen=(self), payment=(self)"
+		Cross-Origin-Embedder-Policy "unsafe-none"
+		Cross-Origin-Opener-Policy "same-origin-allow-popups"
+		Cross-Origin-Resource-Policy "cross-origin"
+
+		defer # delay changes
+	}
+}
+
+(secure_file_access) {
+	# (1)
+	@dotfiles {
+		not path /.well-known/*
+		path /.*
+	}
+	handle @dotfiles {
+		respond @dotfiles 403
+	}
+
+	# (2)
+	@sensitiveFiles {
+		path_regexp (^#.*#|\.(bak|conf|dist|fla|in[ci]|log|orig|psd|sh|sql|sw[op])|~)$
+	}
+	handle @sensitiveFiles {
+		respond @sensitiveFiles 403
+	}
+}
+
+(restrict_bad_user) {
+	@bad-ipv4 client_ip 8.8.8.8/32 {$BAD_IPS}
+	@denied not client_ip private_ranges
+	abort @denied
+}
+
+(static_cache) {
+	root * {args[0]}
+
+	header {
+		# "public, max-age=31536000, immutable"
+		Cache-Control {args[1]}
+	}
+
+	file_server {
+		precompressed br zstd gzip
+		hide .git
+	}
+}
+
+(strapi_upload) {
+	# Proxy the request to the backend
+	import static_cache "/strapi_upload" "public, max-age=3600, s-maxage=604800, stale-while-revalidate=86400, stale-if-error=3600"
+
+	header {
+		# 	CDN-Cache-Control "public, max-age=24400"
+		# remove Last-Modified header
+		-Last-Modified
+	}
+}
+
+:80 {
+	root * /srv
+	import common
+	import restrict_bad_user
+	import secure_file_access
+	import security_headers
+
+	# skip_log /_next/static/* /_media/uploads/* /uploads/* /healthz
+	@favicon {
+		file
+		path /favicon* /apple-touch-icon* /mstile-*
+	}
+
+	handle @favicon {
+		import static_cache "/srv/next_public" "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400"
+		header {
+			CDN-Cache-Control "public, max-age=24400"
+			# remove Last-Modified header
+			-Last-Modified
+		}
+	}
+
+	# Serve static files with appropriate cache headers
+	handle_path /_next/static/* {
+		import static_cache "/srv/next_static" "public, max-age=31536000, immutable"
+		header {
+			# remove Last-Modified header
+			-Last-Modified
+		}
+	}
+
+	handle_path /_media/uploads/* {
+		import strapi_upload
+	}
+
+	handle_path /uploads/* {
+		import strapi_upload
+	}
+
+	@preflight_api {
+		method OPTIONS
+		path /_api/* /api/*
+	}
+
+	handle @preflight_api {
+		header {
+			Access-Control-Allow-Origin {http.request.header.Origin}
+			Access-Control-Allow-Methods "GET, POST, PUT, OPTIONS"
+			Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+			Access-Control-Allow-Credentials true
+			Access-Control-Max-Age "3600"
+			# defer
+		}
+
+		respond "" 204
+	}
+
+	@api_cors {
+		method not OPTIONS
+		path /_api/* /api/*
+	}
+
+	header @api_cors {
+		Access-Control-Allow-Origin {http.request.header.Origin}
+		Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+		Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+		Access-Control-Expose-Headers "Authorization, Content-Type"
+		Access-Control-Allow-Credentials true
+		defer
+	}
+
+	handle_path /_api/* {
+		rewrite * /api{uri}
+		# Proxy the request to the backend
+		reverse_proxy {
+			to {$STRAPI_PROXY}
+			# to http://strapi:1337
+		}
+
+		# TODO: Set rate limits, cache
+	}
+
+	handle {
+		reverse_proxy {
+			to {$WEBSITE_PROXY}
+			# to http://website:80
+		}
+
+		header {
+			Content-Security-Policy <<CSP
+			frame-src 'self' tally.so calendly.com *.google.com;
+			worker-src 'self';
+			CSP
+		}
+
+		# If request was for next image of strapi uploads then set bigger cache duration
+		@next_image expression {path}.startsWith("/_next/image") && {query.url}.startsWith("/_media/uploads")
+		header @next_image {
+			Cache-Control "public, max-age=900, s-maxage=86400, must-revalidate, stale-while-revalidate=14400"
+			# CDN-Cache-Control "public, max-age=24400, must-revalidate"
+			-Last-Modified
+		}
+
+		# TODO: Small cache for pages ?
+	}
+
+	handle_errors {
+		header {
+			Cache-Control "private, no-cache, no-store, max-age=0"
+			-server
+		}
+	}
+}
+
+# health-check
+:8888 {
+	log_skip
+
+	respond /live 200
+	respond /ready 200
+}
