@@ -13,8 +13,8 @@ async function fetchData() {
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
-        "Cache-Control": "no-cache", // Disable caching
       },
+      cache: "no-store",
     });
 
     if (!response.ok) {

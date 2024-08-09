@@ -11,6 +11,7 @@ const fetchDefensiveSecurityData = async (slug: string) => {
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
+      cache: "no-store",
     });
 
     if (!response.ok) {
