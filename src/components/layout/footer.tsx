@@ -149,7 +149,7 @@ const Footer = () => {
             <p className="w-full xl:w-2/3 text-gray-400 pt-5 ">
               Join over 3 million professionals and 96% of Fortune 1000
               companies improving their cybersecurity training & capabilities
-              with Cybrary.
+              with Certbar.
             </p>
           </div>
           <div
