@@ -16,7 +16,7 @@ volumes:
   caddy_data:
   caddy_config:
   strapi_upload:
-    name: ${STRAPI_VOLUME:-strapi_strapi_upload}
+    name: ${STRAPI_VOLUME:-strapi_upload}
     external: true
 
 services:
@@ -36,12 +36,6 @@ services:
     networks:
       - private
       - default
-    # labels:
-      # - traefik.enable=false
-      # - traefik.http.routers.${STACK:-website}.rule=Host(`${APP_HOST:?err}`)
-      # - traefik.http.routers.${STACK:-website}.tls=true
-      # - traefik.http.routers.${STACK:-website}.entrypoints=http,https
-      # - traefik.http.services.${STACK:-website}.loadbalancer.server.port=80
 
   training-caddy:
     <<: *common
@@ -65,7 +59,6 @@ services:
     #   start_period: 30s
     labels:
       - traefik.enable=true
-      # - traefik.http.routers.${STACK:-website}.rule=Host(`${APP_HOST:?err}`)
       - traefik.http.routers.${STACK:-caddy}_website.rule=Host(`${APP_HOST:?err}`)
       - traefik.http.routers.${STACK:-caddy}_website.tls=true
       - traefik.http.routers.${STACK:-caddy}_website.entrypoints=http,https
