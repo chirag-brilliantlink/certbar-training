@@ -1,0 +1,65 @@
+version: "3.9"
+
+x-common: &common
+  restart: unless-stopped
+  logging:
+    driver: journald
+
+# Make sure public network is created prior to first deployment
+networks:
+  public:
+    external: true
+  private:
+    external: true
+
+volumes:
+  caddy_data:
+  caddy_config:
+  strapi_upload:
+    name: ${STRAPI_VOLUME:-strapi_upload}
+    external: true
+
+services:
+  training-website:
+    <<: *common
+    image: ${APP_IMAGE}
+    ports:
+      - 80
+    # healthcheck:
+    #   test: curl --fail http://localhost:3002/api/health/liveness || exit 1
+    #   interval: 30s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 30s
+    env_file:
+      - .env.website
+    networks:
+      - private
+      - default
+
+  training-caddy:
+    <<: *common
+    image: ${CADDY_IMAGE}
+    networks:
+      - public
+      - private
+      - default
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - strapi_upload:/strapi_upload
+    cap_add:
+      - NET_ADMIN
+    # healthcheck:
+    #   test: curl --fail http://localhost:8888/live || exit 1
+    #   interval: 30s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 30s
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${STACK:-caddy}_website.rule=Host(`${APP_HOST:?err}`)
+      - traefik.http.routers.${STACK:-caddy}_website.tls=true
+      - traefik.http.routers.${STACK:-caddy}_website.entrypoints=http,https
+      - traefik.http.services.${STACK:-caddy}_website.loadbalancer.server.port=80

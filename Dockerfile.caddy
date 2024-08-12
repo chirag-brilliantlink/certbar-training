@@ -1,0 +1,16 @@
+ARG WEBSITE_IMAGE=certbar/training-website:latest
+FROM $WEBSITE_IMAGE AS website
+
+FROM caddy:2.8-builder AS builder
+
+RUN xcaddy build \
+    --with github.com/caddyserver/cache-handler@v0.13.0 \
+    --with github.com/caddy-dns/cloudflare
+
+FROM caddy:2
+COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+
+WORKDIR /srv
+# Copy from website image the .next/static folder
+COPY --from=website /app/.next/static /srv/next_static
+COPY --from=website /app/public /srv/next_public

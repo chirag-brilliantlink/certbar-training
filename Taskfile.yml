@@ -1,0 +1,100 @@
+# https://taskfile.dev
+
+version: "3"
+
+includes:
+  vars:
+    taskfile: ./vars.yml
+    optional: true
+
+vars:
+  SSH_CLI: ssh
+  REMOTE_HOST: >-
+    {{ default "deploy@13.233.198.119" .REMOTE_HOST }}
+  STACK: training-website
+  IMAGE_NAME: >-
+    {{ default "certbar/training-website" .IMAGE_NAME }}
+  IMAGE_TAG:
+    sh: echo ${IMAGE_TAG:-$(git describe --tags --always)}
+  DOCKER_REGISTRY: >-
+    {{ default "" .DOCKER_REGISTRY }}
+  DOCKER_COMPOSE_FILE: docker-compose.deploy.yml
+  RUN: >-
+    {{.SSH_CLI}} -T {{.REMOTE_HOST}}
+
+env:
+  APP_IMAGE: >-
+    {{.IMAGE_NAME}}:{{.IMAGE_TAG}}
+  CADDY_IMAGE: >-
+    {{.IMAGE_NAME}}-caddy:{{.IMAGE_TAG}}
+  GIT_HASH:
+    sh: git describe --tags --always
+  ENV: |
+    {{.ENV}}
+
+dotenv:
+  - ".env.{{.ENV}}"
+  - "{{.ENV}}.env"
+  - ".env"
+  - "default.env"
+
+tasks:
+  deploy:init:
+    run: once
+    cmds:
+      - >-
+        {{.RUN}} "
+        mkdir -p ~/.docker-compose/{{.STACK}} && 
+        touch ~/.docker-compose/{{.STACK}}/{.env,.env.website,.env.caddy} && 
+        chmod 750 ~/.docker-compose
+        "
+
+  docker:build:
+    cmds:
+      - >-
+        docker build -f Dockerfile
+        --build-arg ENV={{.ENV | default "production"}} 
+        --label org.opencontainers.image.created="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+        --label org.opencontainers.image.revision="$(git describe --tags --always)"
+        -t ${APP_IMAGE} .
+      - >-
+        docker build -f Dockerfile.caddy
+        --build-arg WEBSITE_IMAGE=${APP_IMAGE} 
+        --label org.opencontainers.image.created="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+        --label org.opencontainers.image.revision="$(git describe --tags --always)"
+        -t ${CADDY_IMAGE} .
+
+  docker:push:
+    cmds:
+      - defer: ssh -T -o "ControlPath ~/.ssh/cm-%r@%h:%p" -O "exit" {{.REMOTE_HOST}}
+        ignore_error: true
+      - echo {{.DOCKER_REGISTRY}}
+      - | # https://gist.github.com/scy/6781836
+        {{ if eq .DOCKER_REGISTRY "localhost:5000" }}
+        ssh -f -o ExitOnForwardFailure=yes -o ControlMaster=auto -o "ControlPath ~/.ssh/cm-%r@%h:%p" -N -T -M -L 5000:localhost:5000 {{.REMOTE_HOST}}
+        docker push ${APP_IMAGE}
+        docker push ${CADDY_IMAGE}
+
+        {{ else if .DOCKER_REGISTRY }}
+        docker push ${APP_IMAGE}
+        docker push ${CADDY_IMAGE}
+
+        {{ else }}
+        docker save ${APP_IMAGE} | bzip2 | {{.RUN}} 'docker load'
+        docker save ${CADDY_IMAGE} | bzip2 | {{.RUN}} 'docker load'
+
+        {{ end }}
+
+  deploy:run:
+    cmds:
+      - |
+        envsubst '$ENV,$GIT_HASH' < Caddyfile | {{.SSH_CLI}} {{.REMOTE_HOST}} "cat >~/.docker-compose/{{.STACK}}/Caddyfile"
+        envsubst < docker-compose.deploy.yml | {{.SSH_CLI}} {{.REMOTE_HOST}} "cat >~/.docker-compose/{{.STACK}}/docker-compose.yml"
+        {{.SSH_CLI}} {{.REMOTE_HOST}} "cd ~/.docker-compose/{{.STACK}} && docker-compose up -d"
+
+  deploy:
+    cmds:
+      - task: deploy:init
+      - task: docker:build
+      - task: docker:push
+      - task: deploy:run
