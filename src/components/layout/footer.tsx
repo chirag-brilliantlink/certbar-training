@@ -36,12 +36,14 @@ const fetchData = async () => {
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
+      next: { revalidate: 0 },
     });
 
     const individualsResponse = await fetch(individualsUrl, {
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
+      next: { revalidate: 0 },
     });
 
     if (!businessResponse.ok || !individualsResponse.ok) {
@@ -149,7 +151,7 @@ const Footer = () => {
             <p className="w-full xl:w-2/3 text-gray-400 pt-5 ">
               Join over 3 million professionals and 96% of Fortune 1000
               companies improving their cybersecurity training & capabilities
-              with Cybrary.
+              with Certbar.
             </p>
           </div>
           <div

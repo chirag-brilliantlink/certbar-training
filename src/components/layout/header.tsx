@@ -37,12 +37,14 @@ const fetchData = async () => {
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
+      next: { revalidate: 0 },
     });
 
     const individualsResponse = await fetch(individualsUrl, {
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
+      next: { revalidate: 0 },
     });
 
     if (!businessResponse.ok || !individualsResponse.ok) {

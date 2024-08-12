@@ -13,6 +13,7 @@ async function fetchData() {
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
       },
+      next: { revalidate: 0 },
     });
 
     if (!response.ok) {
